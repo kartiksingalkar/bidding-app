@@ -1,0 +1,36 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{tag}}
+{%endblock%}
+
+
+{% block body %}
+
+    <h1>Category: {{tag}}</h1>
+
+    <hr>
+    <div class="container">
+            <div class = "row">
+                {% for item1, item2 in mylist %}
+                    <div class="card mb-3 " style="max-width: 100%;">
+                        <div class="row g-0">
+                            <div class="col-md-4" >
+                                <img id="thumb" class="img-fluid rounded " src="{{MEDIA_ROOT}}/{{item2.image}}" >
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h1>
+                                        <a class="card-title font-weight-bold" href="{% url 'listing' item1.title %}"> {{item1.title}} </a>
+                                    </h1>
+                                    <p class="card-text"><strong class="text-muted">Price: ${{ item1.price }}</strong></p>
+                                    <p class="card-text"><small class="text-muted">{{item1.body}}</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+    </div>
+
+{% endblock%}

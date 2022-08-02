@@ -1,0 +1,145 @@
+{% extends "auctions/postLayout.html" %}
+
+{% block title %}
+    {{ auction.title }}
+{% endblock %}
+
+{% block style %}
+
+<style>
+
+    @media screen and (max-width: 767) {
+        #thumb {
+            max-width: 100%;
+        }
+    }
+
+    @media screen and (min-width: 767) {
+        #thumb {
+            min-width: 300%;
+        }
+    }
+
+</style>
+
+{% endblock %}
+
+
+
+{% block body %}
+{% if auction.status %}
+
+<h1 class="font-weight-bold">{{ auction.title }} </h1>
+
+{% else %}
+
+<h1 class="font-weight-bold">Sold: {{ auction.title }} </h1>
+
+{%endif%}
+
+
+{% if user ==  auction.user %}
+    {% if auction.status %}
+        <form action="" method="POSt">
+            {% csrf_token %}
+            <input type="hidden" value='closeit' name = 'checkclose'>
+            <button name="close"  type="submit" class="btn btn-danger " style="float:right">Close Auction</button>
+        </form>
+    {%else%}
+            <button name="close"  class="btn btn-danger " style="float:right">Closed</button>
+    {%endif%}
+{%endif%}
+
+{% if added %}
+    <form method="POSt" action="{% url 'watchlist_remove' auction.title %}">
+        {% csrf_token %}
+
+        <button type="submit" class="btn badge bg-secondary shadow" style="color: white">Watchlisted</button>
+    </form>
+{%endif%}
+{%if not added%}
+    <form method="POSt" action="{% url 'watchlist_add' auction.title %}">
+        {% csrf_token %}
+
+        <button type="submit" class="btn badge bg-secondary shadow" style="color: white">Watchlist</button>
+    </form>
+{%endif%}
+
+<hr>
+<h1><strong>${{price}}</strong></h1>
+<div class="card">
+    <div style="display:flex; align-items:center">
+            {% for image in images %}
+                <div class="col-md-4" >
+                    <img id="thumb" class="img-fluid rounded shadow" src="{{MEDIA_ROOT}}/{{image.image}}">
+                </div>
+            {% endfor %}
+    </div>
+    {% endblock %}
+
+
+{% block description %}
+
+        <div class="card-body">
+            <p class="font-weight-bold" style="font-size:larger">{{ auction.body }}.</p>
+        </div>
+
+        {%if bidMessage%}
+
+        <div class="alert alert-danger" role="alert">
+            {{bidMessage}}
+        </div>
+    
+        {%endif%}
+
+{% endblock %}
+
+{% block bids %}
+
+
+    <ul class = "list-group">
+    {%if bids%}
+        {%for bid in bids %}
+            <li class="list-group-item d-flex align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold text-capitalize">{{bid}}</div>
+                    is bidding
+                </div>&nbsp &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp  &nbsp&nbsp
+                    <h3><span class="badge bg-primary rounded-pill shadow" style="color:white">{{bid.amount}}</span></h3>
+            </li>
+        {%endfor%}
+    {%endif%}
+    </ul>
+
+{% endblock %}
+
+{% block details %}
+    <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center" style="justify-content: start !important;">
+            Listed by &nbsp
+            <span class="badge-primary badge-pill shadow text-capitalize">{{owner}}</span>
+        </li>
+        <li class="list-group-item d-flex justify-content-between align-items-center" style="justify-content: start !important;">Tags &nbsp
+            {% for tag in tags.all %}
+        
+            <span class="badge-primary badge-pill shadow text-capitalize">{{tag}}</span>&nbsp
+        
+            {% endfor %}
+        </li>
+    </ul>
+{% endblock %}
+
+{% block comments %}
+    {% for comment in comments %}
+
+        <div>
+            {{comment.user}}
+        </div>
+        <div>
+            {{comment.content}}
+        </div>
+        <hr>
+
+    {% endfor %}
+{% endblock %}
+

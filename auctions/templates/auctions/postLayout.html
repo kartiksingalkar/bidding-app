@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+        {% block style %}
+        {% endblock %}
+    </head>
+    <body>
+        <h1 class="font-weight-bold">Auctions</h1>
+        <div>
+            {% if user.is_authenticated %}
+                Signed in as <strong class='text-capitalize'>{{ user.username }}</strong>.
+            {% else %}
+                Not signed in.
+            {% endif %}
+        </div>
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
+            </li>
+            {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'watchlist' %}">Watchlist <span class="badge bg-secondary" style="color:white">{{amount}}</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'new' %}">Create Listing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Log In</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+            {% endif %}
+        </ul>
+        <hr>
+        {% block body %}
+        {% endblock %}
+        {% block description %}
+        {% endblock %}
+        {% if auction.status %}
+
+            <h1 class="font-weight-bold">Bids:</h1>
+            {% if user != auction.user %}
+                <form id="bid_form" method="post" action="" enctype="multipart/form-data">
+
+                    {% csrf_token %}
+                    {% for hidden in bidForm.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+                    {% for field in bidForm %}
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+                            </div>
+                            {{ field }}
+                            <input class="btn btn-primary" type="submit" name="submit" value="Submit"/>
+                        </div>
+                    {% endfor %}
+                
+                    
+                </form>
+            {%endif%}
+            <hr>
+        
+        {% else %}
+            {% if winner == user %}
+        
+                <h1 class="font-weight-bold alert alert-success">You Won The Auction</h1>
+
+            {%else%}
+
+                <h1 class="font-weight-bold alert alert-danger">Sold.</h1>
+
+            {%endif%}
+        
+        {%endif%}
+        
+        {% block bids %}
+        {% endblock %}
+
+        <h1 class="font-weight-bold">Details</h1>
+        {% block details %}
+        {% endblock %}
+
+
+        <h1 class="font-weight-bold">Comments</h1>
+        {% if auction.status %}
+            <form id="comment_form" method="post" action="" enctype="multipart/form-data">
+
+                {% csrf_token %}
+                {% for hidden in commentForm.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in commentForm %}
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text">Add Comment:</span>
+                        </div>
+                        {{ field }}
+                        <input class="btn btn-primary" type="submit" name="submit" value="Submit" />
+                    </div>
+                {% endfor %}
+            
+                
+            </form>
+        {%endif%}
+<hr>
+
+        {% block comments %}
+        {% endblock %}
+    </body>
+</html>

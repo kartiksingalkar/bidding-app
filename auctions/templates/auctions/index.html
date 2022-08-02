@@ -1,0 +1,62 @@
+{% extends "auctions/layout.html" %}
+
+{% block style %}
+
+{% comment %} <style>
+
+    #thumb {
+        min-width:100%;
+        align-self: center;
+    }
+
+    @media screen and (max-width: 595px)   {
+        #thumb {
+            min-height:120%;
+            min-width: 150%;
+            align-self: center;
+            transform: translateY(0px);
+            transform: translateX(-100px);
+        }
+    }
+
+    @media screen and (min-width: 1300px)   {
+        #thumb {
+            min-width:100%;
+            align-self: center;
+            transform: translateY(-200px);
+        }
+    }
+
+</style> {% endcomment %}
+
+{% endblock %}
+
+{% block body %}
+    <h1>Active Listings</h1>
+
+    <hr>
+
+    {% for item1, item2, price in mylist %}
+        {% if item1.status %}
+            <div class="card mb-3 " style="max-width: 100%;">
+                <div class="row g-0">
+                    <div class="col-md-4" >
+                        <img id="thumb" class="img-fluid rounded " src="{{MEDIA_ROOT}}/{{item2.image}}" >
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h1>
+                                <a class="card-title font-weight-bold" href="{% url 'listing' item1.title %}"> {{item1.title}} </a>
+                            </h1>
+                            <p class="card-text" style="font-size:20pt"><strong>Price: ${{price}}</strong></p>
+                            <p class="card-text" style="font-size:15pt"><small class="text-muted">{{item1.body}}</small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {%endif%}
+    {% endfor %}
+            
+            <hr>
+
+{% endblock %}
